@@ -24,7 +24,7 @@ public class GeradoraDeFigurinhas {
         var fonte = new FontUIResource(Font.SANS_SERIF, Font.BOLD, 128);
         graphics.setFont(fonte);
         graphics.setColor(Color.CYAN);
-        graphics.drawString("TOPZERA", 400, novaAltura - 100);
+        graphics.drawString("TOPZERA", 100, novaAltura - 100);
         ImageIO.write(novaImagem, "png", new File (nomeArquivo));
 
     }
