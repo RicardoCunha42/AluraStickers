@@ -1,25 +1,34 @@
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
-import java.util.Map;
 public class App {
     public static void main(String[] args) throws Exception {
-        String url = "https://api.mocki.io/v2/549a5d8b";
-		URI endereço = URI.create(url);
-		var client = HttpClient.newHttpClient();
-		var request = HttpRequest.newBuilder(endereço).GET().build();
-		HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-		String body = response.body(); 
+        
+		ExtratorDeConteudo extratorDeConteudo = new extratorDeConteudoDaNasa();
+		String url = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&start_date=2022-06-12&end_date=2022-06-14";
+
+		//ExtratorDeConteudo extratorDeConteudo = new extratorDeConteudoDoIMDB();
+		//String url = "https://api.mocki.io/v2/549a5d8b/Top250Movies";
 		
-		var parser = new JsonParser ();
-		List<Map<String, String>> listaDeFIlmes = parser.parse(body);
-		for (Map<String, String> filme : listaDeFIlmes) {
-			System.out.println(filme.get("title"));
-			System.out.println(filme.get("image"));
-			System.out.println(filme.get("imDbRating"));
+		ClienteHttp cliente = new ClienteHttp();
+		String body = cliente.buscaDados(url);
+
+		List<Conteudo> conteudos = extratorDeConteudo.extraiConteudos(body);
+
+		var geradora = new GeradoraDeFigurinhas ();
+		
+		for (int i = 0; i < 3; i++) {
+			
+			Conteudo conteudo = conteudos.get(i);
+		
+			String nomeArquivo = "Saida/" + conteudo.getTitulo() + ".png";
+			InputStream inputStream = new URL(conteudo.getUrlImagem()).openStream();
+			
+			geradora.cria (inputStream, nomeArquivo);
+
+			System.out.println(conteudo.getTitulo());
+			System.out.println();
+		
 		}
     }
 }
